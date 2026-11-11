@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block titulo %}Relatórios{% endblock %}
+{% block conteudo %}
+<h1 class="mb-3">Relatórios</h1>
+
+<form class="painel mb-4" method="get">
+  <div class="row g-2 align-items-end">
+    <div class="col-6 col-md-3">
+      <label class="form-label" for="inicio">Vendas a partir de</label>
+      <input class="form-control" type="date" id="inicio" name="inicio" value="{{ request.args.get('inicio', '') }}">
+    </div>
+    <div class="col-6 col-md-3">
+      <label class="form-label" for="fim">Até</label>
+      <input class="form-control" type="date" id="fim" name="fim" value="{{ request.args.get('fim', '') }}">
+    </div>
+    <div class="col-md-4">
+      <button class="btn btn-dark" type="submit">Filtrar período</button>
+      <a class="btn btn-link" href="{{ url_for('relatorios') }}">Todo o período</a>
+    </div>
+  </div>
+</form>
+
+<div class="row g-3 mb-3">
+  <div class="col-lg-6">
+    <div class="painel h-100">
+      <h2>Motos mais vendidas</h2>
+      {% if mais_vendidas %}
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead><tr><th>Marca</th><th>Modelo</th><th class="text-center">Unidades</th><th class="text-valor">Total vendido</th></tr></thead>
+          <tbody>
+          {% for linha in mais_vendidas %}
+            <tr><td>{{ linha.marca }}</td><td>{{ linha.modelo }}</td><td class="text-center">{{ linha.unidades }}</td><td class="text-valor">{{ linha.total|moeda }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}<p class="mb-0">Nenhuma venda no período.</p>{% endif %}
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="painel h-100">
+      <h2>Vendas por vendedor</h2>
+      {% if por_vendedor %}
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead><tr><th>Vendedor</th><th class="text-center">Vendas</th><th class="text-valor">Total vendido</th><th class="text-valor">Comissão</th></tr></thead>
+          <tbody>
+          {% for linha in por_vendedor %}
+            <tr><td>{{ linha.nome }}</td><td class="text-center">{{ linha.vendas }}</td><td class="text-valor">{{ linha.total|moeda }}</td>
+                <td class="text-valor">{{ (linha.total * linha.comissao_pct / 100)|moeda }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}<p class="mb-0">Nenhuma venda no período.</p>{% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="painel">
+  <h2>Vendas detalhadas</h2>
+  {% if detalhado %}
+  <div class="table-responsive">
+    <table class="table table-sm mb-0">
+      <thead><tr><th>Venda</th><th>Data</th><th>Cliente</th><th>Vendedor</th><th>Moto</th><th class="text-center">Qtd.</th>
+                 <th class="text-valor">Preço unit.</th><th class="text-valor">Subtotal</th><th>Pagamento</th></tr></thead>
+      <tbody>
+      {% for linha in detalhado %}
+        <tr><td>{{ linha.id_venda }}</td><td>{{ linha.data_venda|data_br }}</td><td>{{ linha.cliente }}</td><td>{{ linha.vendedor }}</td>
+            <td>{{ linha.marca }} {{ linha.modelo }}</td><td class="text-center">{{ linha.quantidade }}</td>
+            <td class="text-valor">{{ linha.preco_unitario|moeda }}</td><td class="text-valor">{{ linha.subtotal|moeda }}</td>
+            <td>{{ linha.forma_pagamento }}</td></tr>
+      {% endfor %}
+      </tbody>
+      <tfoot><tr><th colspan="7" class="text-end">Total do período</th><th class="text-valor">{{ total_geral|moeda }}</th><th></th></tr></tfoot>
+    </table>
+  </div>
+  {% else %}<p class="mb-0">Nenhuma venda no período.</p>{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block titulo %}{{ 'Editar moto' if editando else 'Cadastrar moto' }}{% endblock %}
+{% block conteudo %}
+<h1 class="mb-3">{{ 'Editar moto' if editando else 'Cadastrar moto' }}</h1>
+
+<form class="painel" method="post" style="max-width: 720px;">
+  <div class="row g-3">
+    <div class="col-md-5">
+      <label class="form-label" for="id_marca">Marca</label>
+      <select class="form-select" id="id_marca" name="id_marca" required>
+        <option value="">Escolha</option>
+        {% for marca in marcas %}
+        <option value="{{ marca.id_marca }}" {{ 'selected' if moto.id_marca == marca.id_marca }}>{{ marca.nome }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-7">
+      <label class="form-label" for="modelo">Modelo</label>
+      <input class="form-control" id="modelo" name="modelo" maxlength="80" required value="{{ moto.modelo or '' }}">
+    </div>
+    <div class="col-6 col-md-3">
+      <label class="form-label" for="ano">Ano</label>
+      <input class="form-control" type="number" id="ano" name="ano" min="1950" required value="{{ moto.ano if moto.ano is not none else '' }}">
+    </div>
+    <div class="col-6 col-md-3">
+      <label class="form-label" for="cilindrada">Cilindrada (cc)</label>
+      <input class="form-control" type="number" id="cilindrada" name="cilindrada" min="1" required value="{{ moto.cilindrada if moto.cilindrada is not none else '' }}">
+    </div>
+    <div class="col-md-6">
+      <label class="form-label" for="cor">Cor</label>
+      <input class="form-control" id="cor" name="cor" maxlength="30" value="{{ moto.cor or '' }}">
+    </div>
+    <div class="col-6 col-md-4">
+      <label class="form-label" for="preco">Preço (R$)</label>
+      <input class="form-control" id="preco" name="preco" inputmode="decimal" required placeholder="18990,00"
+             value="{{ ('%.2f' % moto.preco).replace('.', ',') if moto.preco is not none else '' }}">
+    </div>
+    <div class="col-6 col-md-3">
+      <label class="form-label" for="estoque">Estoque</label>
+      <input class="form-control" type="number" id="estoque" name="estoque" min="0" required value="{{ moto.estoque if moto.estoque is not none else '' }}">
+    </div>
+  </div>
+  <div class="mt-4 d-flex gap-2">
+    <button class="btn btn-faixa" type="submit">{{ 'Salvar alterações' if editando else 'Cadastrar moto' }}</button>
+    <a class="btn btn-outline-dark" href="{{ url_for('listar_motos') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}MotoGest{% endblock %} | MotoGest</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+</head>
+<body>
+  <nav class="navbar navbar-expand navbar-moto mb-4">
+    <div class="container">
+      <a class="navbar-brand" href="{{ url_for('index') }}">Moto<span>Gest</span></a>
+      <div class="navbar-nav flex-wrap">
+        {% set pagina = request.endpoint or '' %}
+        <a class="nav-link {{ 'active' if pagina == 'index' }}" href="{{ url_for('index') }}">Início</a>
+        <a class="nav-link {{ 'active' if 'moto' in pagina }}" href="{{ url_for('listar_motos') }}">Motos</a>
+        <a class="nav-link {{ 'active' if 'cliente' in pagina }}" href="{{ url_for('listar_clientes') }}">Clientes</a>
+        <a class="nav-link {{ 'active' if 'venda' in pagina }}" href="{{ url_for('listar_vendas') }}">Vendas</a>
+        <a class="nav-link {{ 'active' if pagina == 'relatorios' }}" href="{{ url_for('relatorios') }}">Relatórios</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+      {% for categoria, mensagem in mensagens %}
+        <div class="alert alert-{{ categoria }}" role="alert">{{ mensagem }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block conteudo %}{% endblock %}
+  </main>
+
+  <footer class="container py-4 mt-4">MotoGest: Trabalho N2 de Projeto de Banco de Dados e Aplicações</footer>
+</body>
+</html>

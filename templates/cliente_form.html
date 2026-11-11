@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block titulo %}{{ 'Editar cliente' if editando else 'Cadastrar cliente' }}{% endblock %}
+{% block conteudo %}
+<h1 class="mb-3">{{ 'Editar cliente' if editando else 'Cadastrar cliente' }}</h1>
+
+<form class="painel" method="post" style="max-width: 720px;">
+  <div class="row g-3">
+    <div class="col-md-8">
+      <label class="form-label" for="nome">Nome</label>
+      <input class="form-control" id="nome" name="nome" maxlength="100" required value="{{ cliente.nome or '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" for="cpf">CPF</label>
+      <input class="form-control" id="cpf" name="cpf" maxlength="14" required placeholder="000.000.000-00" value="{{ cliente.cpf or '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" for="telefone">Telefone</label>
+      <input class="form-control" id="telefone" name="telefone" maxlength="20" value="{{ cliente.telefone or '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" for="email">E-mail</label>
+      <input class="form-control" type="email" id="email" name="email" maxlength="100" value="{{ cliente.email or '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" for="cidade">Cidade</label>
+      <input class="form-control" id="cidade" name="cidade" maxlength="60" value="{{ cliente.cidade or '' }}">
+    </div>
+  </div>
+  <div class="mt-4 d-flex gap-2">
+    <button class="btn btn-faixa" type="submit">{{ 'Salvar alterações' if editando else 'Cadastrar cliente' }}</button>
+    <a class="btn btn-outline-dark" href="{{ url_for('listar_clientes') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

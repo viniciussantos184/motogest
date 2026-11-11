@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block titulo %}Motos{% endblock %}
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="mb-0">Motos</h1>
+  <a class="btn btn-faixa" href="{{ url_for('cadastrar_moto') }}">Cadastrar moto</a>
+</div>
+
+<form class="painel mb-3" method="get">
+  <div class="row g-2 align-items-end">
+    <div class="col-md-3">
+      <label class="form-label" for="modelo">Modelo</label>
+      <input class="form-control" id="modelo" name="modelo" value="{{ request.args.get('modelo', '') }}" placeholder="Ex.: CG 160">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label" for="marca">Marca</label>
+      <select class="form-select" id="marca" name="marca">
+        <option value="">Todas</option>
+        {% for marca in marcas %}
+        <option value="{{ marca.id_marca }}" {{ 'selected' if request.args.get('marca') == marca.id_marca|string }}>{{ marca.nome }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label" for="preco_min">Preço mínimo</label>
+      <input class="form-control" id="preco_min" name="preco_min" value="{{ request.args.get('preco_min', '') }}" inputmode="decimal">
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label" for="preco_max">Preço máximo</label>
+      <input class="form-control" id="preco_max" name="preco_max" value="{{ request.args.get('preco_max', '') }}" inputmode="decimal">
+    </div>
+    <div class="col-md-3">
+      <div class="form-check mb-2">
+        <input class="form-check-input" type="checkbox" id="so_estoque" name="so_estoque" value="1" {{ 'checked' if request.args.get('so_estoque') }}>
+        <label class="form-check-label" for="so_estoque">Só com estoque</label>
+      </div>
+      <button class="btn btn-dark" type="submit">Buscar</button>
+      <a class="btn btn-link" href="{{ url_for('listar_motos') }}">Limpar</a>
+    </div>
+  </div>
+</form>
+
+{% if motos %}
+<div class="table-responsive painel p-0">
+  <table class="table table-hover mb-0">
+    <thead>
+      <tr><th>Marca</th><th>Modelo</th><th>Ano</th><th>Cilindrada</th><th>Cor</th>
+          <th class="text-valor">Preço</th><th class="text-center">Estoque</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for moto in motos %}
+      <tr>
+        <td>{{ moto.marca.nome }}</td>
+        <td>{{ moto.modelo }}</td>
+        <td>{{ moto.ano }}</td>
+        <td>{{ moto.cilindrada }} cc</td>
+        <td>{{ moto.cor or '' }}</td>
+        <td class="text-valor">{{ moto.preco|moeda }}</td>
+        <td class="text-center {{ 'sem-estoque' if moto.estoque == 0 }}">{{ moto.estoque }}</td>
+        <td class="text-end text-nowrap">
+          <a class="btn btn-sm btn-outline-dark" href="{{ url_for('editar_moto', id_moto=moto.id_moto) }}">Editar</a>
+          <form class="d-inline" method="post" action="{{ url_for('excluir_moto', id_moto=moto.id_moto) }}"
+                data-confirma="Excluir {{ moto.modelo }}?" onsubmit="return confirm(this.dataset.confirma);">
+            <button class="btn btn-sm btn-outline-danger" type="submit">Excluir</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+<p class="text-secondary mt-2">{{ motos|length }} moto(s) encontrada(s).</p>
+{% else %}
+<div class="painel">Nenhuma moto encontrada com esses filtros. Limpe a busca ou cadastre uma moto.</div>
+{% endif %}
+{% endblock %}

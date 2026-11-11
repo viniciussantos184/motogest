@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block titulo %}Vendas{% endblock %}
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="mb-0">Vendas</h1>
+  <a class="btn btn-faixa" href="{{ url_for('registrar_venda') }}">Registrar venda</a>
+</div>
+
+{% if vendas %}
+<div class="table-responsive painel p-0">
+  <table class="table table-hover mb-0">
+    <thead><tr><th>Nº</th><th>Data</th><th>Cliente</th><th>Vendedor</th><th>Motos</th><th>Pagamento</th><th class="text-valor">Total</th><th></th></tr></thead>
+    <tbody>
+    {% for venda in vendas %}
+      <tr>
+        <td>{{ venda.id_venda }}</td>
+        <td>{{ venda.data_venda|data_br }}</td>
+        <td>{{ venda.cliente.nome }}</td>
+        <td>{{ venda.vendedor.nome }}</td>
+        <td>{% for item in venda.itens %}{{ item.quantidade }}× {{ item.moto.marca.nome }} {{ item.moto.modelo }}{% if not loop.last %}<br>{% endif %}{% endfor %}</td>
+        <td>{{ venda.forma_pagamento }}</td>
+        <td class="text-valor">{{ venda.total|moeda }}</td>
+        <td class="text-end">
+          <form method="post" action="{{ url_for('excluir_venda', id_venda=venda.id_venda) }}"
+                data-confirma="Cancelar a venda nº {{ venda.id_venda }}? As motos voltam ao estoque." onsubmit="return confirm(this.dataset.confirma);">
+            <button class="btn btn-sm btn-outline-danger" type="submit">Cancelar venda</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="painel">Nenhuma venda registrada ainda.</div>
+{% endif %}
+{% endblock %}
